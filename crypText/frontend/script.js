@@ -239,6 +239,39 @@
         const chatMessages = document.getElementById('chat-messages');
         const contactElements = document.querySelectorAll('.contact');
         const currentChatName = document.getElementById('current-chat-name');
+        const socket = io('http://localhost:5000', {
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+            transports: ['websocket', 'polling'],
+            cors: {
+                origin: "http://localhost:8080",
+                methods: ['GET', 'POST'],
+                credentials: true
+            }
+        });
+        const connectionStatus = document.getElementById('connection-status');
+
+        socket.on('connect', () => {
+            connectionStatus.textContent = 'Connected';
+            connectionStatus.style.color = 'green';
+        });
+        socket.on('disconnect', () => {
+            connectionStatus.textContent = 'Disconnected';
+            connectionStatus.style.color = 'red';
+        });
+        socket.on('connect_error', () => {
+            connectionStatus.textContent = 'Connection Error';
+            connectionStatus.style.color = 'red';
+        });
+        socket.on('connect_timeout', () => {
+            connectionStatus.textContent = 'Connection Timeout';
+            connectionStatus.style.color = 'red';
+        });
+        socket.on('reconnect', (attempt) => {
+            connectionStatus.textContent = `Reconnected after ${attempt} attempts`;
+            connectionStatus.style.color = 'green';
+        });
 
         // State
         let currentUser = {
