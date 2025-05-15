@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CrypText - Secure Messaging</title>
+    <title>CrypText - Keep It Crypted</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cal+Sans&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/emoji-button@latest/dist/index.min.js"></script>
 </head>
 <body>
     <header>
@@ -20,6 +20,22 @@
     
     <div class="main-content">
         <div class="container">
+            <!-- Add missing elements -->
+            <div id="top-controls">
+                <div id="search-bar" style="display: none;">
+                    <input type="text" id="search-contacts" placeholder="Search...">
+                </div>
+            </div>
+            <img id="profile-display" alt="Profile Picture" style="display: none;">
+
+            <div id="settings-container">
+                <button class="settings-icon" id="settings-btn">⚙</button>
+                <div class="settings-bar" id="settings-bar">
+                    <button id="dark-mode-toggle">Toggle Dark Mode</button>
+                    <button id="close-settings-btn">X</button>
+                </div>
+            </div>
+
             <!-- Welcome Screen -->
             <div class="screen welcome-screen active" id="welcome-screen">
                 <div class="card">
@@ -27,7 +43,7 @@
                     <p>Secure messaging without email or passwords. Your privacy is our priority.</p>
                     <div class="actions">
                         <button class="btn" id="create-account-btn">Create New Account</button>
-                        <button class="btn" id="recover-account-btn">Recover Existing Account</button>
+                        <button class="btn" id="recover-account-btn">Login</button>
                     </div>
                 </div>
             </div>
@@ -42,6 +58,11 @@
                     <div class="form-group">
                         <label for="display-name">Choose your display name (optional):</label>
                         <input type="text" id="display-name" class="form-control" placeholder="Enter a display name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profile-pic">Upload Profile Picture:</label>
+                        <input type="file" id="profile-pic" class="form-control" accept="image/*">
                     </div>
                     
                     <div class="alert alert-success">
@@ -86,23 +107,40 @@
             
             <!-- Chat Screen -->
             <div class="screen chat-screen" id="chat-screen">
-                <h2>Your Messages</h2>
-                <p>User ID: <span id="chat-user-id">------</span> | Name: <span id="chat-display-name">User</span> | Status: <span id="connection-status"></span></p>
+                <div class="chat-header">
+                    <div class="profile-box">
+                        <div class="profile-container">
+                            <img id="profile-picture" alt="Profile Picture" class="profile-picture" style="display: none;">
+                            <div>
+                                <p id="chat-display-name">Anonymous User</p>
+                                <p id="chat-user-id">@123456</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="chat-subtitle">Your messages</p>
+                </div>
                 <div class="chat-container">
-                    <div class="contact-list" id="contact-list">
-                        <!-- Demo contacts -->
+                    <div class="contact-list">
                         <div class="contact active-contact" data-id="123456">
-                            <div class="contact-name">crypText Info</div>
-                            <div class="contact-preview">Welcome to crypText!
+                            <img src="images/crypText.logo.png" alt="CrypText Profile Picture" class="contact-picture">
+                            <div>
+                                <div class="contact-name">crypText Info</div>
+                                <div class="contact-preview">Yeah, and I love the 12-word recovery phrase system.</div>
                             </div>
                         </div>
                         <div class="contact" data-id="789012">
-                            <div class="contact-name">Jamal (789012)</div>
-                            <div class="contact-preview">No messages with this person yet</div>
+                            <img src="images/jamal.pfp.webp" alt="Jamal Profile Picture" class="contact-picture">
+                            <div>
+                                <div class="contact-name">Jamal (@789012)</div>
+                                <div class="contact-preview">No messages with this person yet</div>
+                            </div>
                         </div>
                         <div class="contact" data-id="345678">
-                            <div class="contact-name">Rahel (345678)</div>
-                            <div class="contact-preview">No messages with this person yet</div>
+                            <img src="images/rahel.pfp.jpg" alt="Rahel Profile Picture" class="contact-picture">
+                            <div>
+                                <div class="contact-name">Rahel (@345678)</div>
+                                <div class="contact-preview">No messages with this person yet</div>
+                            </div>
                         </div>
                     </div>
                     
@@ -122,441 +160,36 @@
                                 I'm good! Just trying out this new secure messaging app.
                                 <div class="message-time">10:31</div>
                             </div>
-                            
-                            <div class="message received">
-                                It's pretty cool that we don't need email to sign up!
-                                <div class="message-time">10:32</div>
-                            </div>
-                            
-                            <div class="message sent">
-                                Yeah, and I love the 12-word recovery phrase system.
-                                <div class="message-time">10:33</div>
-                            </div>
                         </div>
                         
                         <div class="chat-input">
                             <input type="text" placeholder="Type a message..." id="message-input">
+                            <button class="btn" id="emoji-btn">😊</button>
                             <button class="btn" id="send-btn">Send</button>
                         </div>
                     </div>
                 </div>
                 
-                <button class="btn" id="logout-btn" style="margin-top: 20px; background-color: #6c757d;">Logout</button>
+                <button class="btn" id="logout-btn">Log out</button>
             </div>
         </div>
     </div>
     
     <footer>
         <div class="container">
+            <div class="about-bar">
+                <a href="about.html" class="about-link">About</a>
+                <span class="dot-separator">•</span>
+                <a href="contact.html" class="about-link">Contact Us</a>
+                <span class="dot-separator">•</span>
+                <a href="opensource.html" class="about-link">Open Source</a>
+            </div>
             <p>CrypText &copy; 2025 - Keep It Crypted</p>
         </div>
     </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>ript src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="script.js"></script> <!-- Link to the new script.js file -->ript src="script.js"></script> <!-- Link to the new script.js file -->
+</body></body>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <script>
-        // BIP39 word list (abbreviated version for demo purposes)
-        const wordList = [
-            "abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse",
-            "access", "accident", "account", "accuse", "achieve", "acid", "acoustic", "acquire", "across", "act",
-            "action", "actor", "actress", "actual", "adapt", "add", "addict", "address", "adjust", "admit",
-            "adult", "advance", "advice", "aerobic", "affair", "afford", "afraid", "again", "age", "agent",
-            "agree", "ahead", "aim", "air", "airport", "aisle", "alarm", "album", "alcohol", "alert",
-            "alien", "all", "alley", "allow", "almost", "alone", "alpha", "already", "also", "alter",
-            "always", "amateur", "amazing", "among", "amount", "amused", "analyst", "anchor", "ancient", "anger",
-            "angle", "angry", "animal", "ankle", "announce", "annual", "another", "answer", "antenna", "antique",
-            "anxiety", "any", "apart", "apology", "appear", "apple", "approve", "april", "arch", "arctic",
-            "area", "arena", "argue", "arm", "armed", "armor", "army", "around", "arrange", "arrest",
-            "arrive", "arrow", "art", "artefact", "artist", "artwork", "ask", "aspect", "assault", "asset",
-            "assist", "assume", "asthma", "athlete", "atom", "attack", "attend", "attitude", "attract", "auction",
-            "audit", "august", "aunt", "author", "auto", "autumn", "average", "avocado", "avoid", "awake",
-            "aware", "away", "awesome", "awful", "awkward", "axis", "baby", "bachelor", "bacon", "badge",
-            "bag", "balance", "balcony", "ball", "bamboo", "banana", "banner", "bar", "barely", "bargain",
-            "barrel", "base", "basic", "basket", "battle", "beach", "bean", "beauty", "because", "become",
-            "beef", "before", "begin", "behave", "behind", "believe", "below", "belt", "bench", "benefit",
-            "best", "betray", "better", "between", "beyond", "bicycle", "bid", "bike", "bind", "biology",
-            "bird", "birth", "bitter", "black", "blade", "blame", "blanket", "blast", "bleak", "bless",
-            "blind", "blood", "blossom", "blouse", "blue", "blur", "blush", "board", "boat", "body",
-            "boil", "bomb", "bone", "bonus", "book", "boost", "border", "boring", "borrow", "boss",
-            // ... more words would go here in a real implementation
-        ];
 
-        // DOM Elements
-        const screens = {
-            welcome: document.getElementById('welcome-screen'),
-            setup: document.getElementById('setup-screen'),
-            recovery: document.getElementById('recovery-screen'),
-            chat: document.getElementById('chat-screen')
-        };
-
-        // Buttons
-        const createAccountBtn = document.getElementById('create-account-btn');
-        const recoverAccountBtn = document.getElementById('recover-account-btn');
-        const completeSetupBtn = document.getElementById('complete-setup-btn');
-        const phraseConfirmedCheckbox = document.getElementById('phrase-confirmed');
-        const recoverBtn = document.getElementById('recover-btn');
-        const backToWelcomeBtn = document.getElementById('back-to-welcome');
-        const logoutBtn = document.getElementById('logout-btn');
-        const sendBtn = document.getElementById('send-btn');
-
-        // Other elements
-        const userIdDisplay = document.getElementById('user-id');
-        const chatUserIdDisplay = document.getElementById('chat-user-id');
-        const chatDisplayNameElement = document.getElementById('chat-display-name');
-        const displayNameInput = document.getElementById('display-name');
-        const recoveryPhraseContainer = document.getElementById('recovery-phrase');
-        const recoveryInputContainer = document.getElementById('recovery-input');
-        const recoveryErrorAlert = document.getElementById('recovery-error');
-        const messageInput = document.getElementById('message-input');
-        const chatMessages = document.getElementById('chat-messages');
-        const contactElements = document.querySelectorAll('.contact');
-        const currentChatName = document.getElementById('current-chat-name');
-        const socket = io('http://localhost:5000', {
-            reconnection: true,
-            reconnectionAttempts: 5,
-            reconnectionDelay: 1000,
-            transports: ['websocket', 'polling'],
-            cors: {
-                origin: "http://localhost:8080",
-                methods: ['GET', 'POST'],
-                credentials: true
-            }
-        });
-        const connectionStatus = document.getElementById('connection-status');
-
-        // Socket connection status
-        socket.on('connect', () => {
-            connectionStatus.textContent = 'Connected';
-            connectionStatus.style.color = 'green';
-        });
-        socket.on('disconnect', () => {
-            connectionStatus.textContent = 'Disconnected';
-            connectionStatus.style.color = 'red';
-        });
-        socket.on('connect_error', () => {
-            connectionStatus.textContent = 'Connection Error';
-            connectionStatus.style.color = 'red';
-        });
-        socket.on('connect_timeout', () => {
-            connectionStatus.textContent = 'Connection Timeout';
-            connectionStatus.style.color = 'red';
-        });
-        socket.on('reconnect', (attempt) => {
-            connectionStatus.textContent = `Reconnected after ${attempt} attempts`;
-            connectionStatus.style.color = 'green';
-        });
-
-        // State
-        let currentUser = {
-            id: null,
-            displayName: '',
-            recoveryPhrase: [],
-            contacts: {}
-        };
-
-        // Functions
-        function showScreen(screenId) {
-            Object.values(screens).forEach(screen => {
-                screen.classList.remove('active');
-            });
-            screens[screenId].classList.add('active');
-        }
-
-        function generateUniqueId() {
-            return Math.floor(100000 + Math.random() * 900000).toString();
-        }
-
-        function generateRecoveryPhrase() {
-            const phrase = [];
-            for (let i = 0; i < 12; i++) {
-                const randomIndex = Math.floor(Math.random() * wordList.length);
-                phrase.push(wordList[randomIndex]);
-            }
-            return phrase;
-        }
-
-        function displayRecoveryPhrase(phrase) {
-            recoveryPhraseContainer.innerHTML = '';
-            phrase.forEach((word, index) => {
-                const wordElement = document.createElement('div');
-                wordElement.className = 'phrase-word';
-                wordElement.innerHTML = `<span>${index + 1}.</span> ${word}`;
-                recoveryPhraseContainer.appendChild(wordElement);
-            });
-        }
-
-        function createRecoveryInputs() {
-            recoveryInputContainer.innerHTML = '';
-            for (let i = 0; i < 12; i++) {
-                const wordInputDiv = document.createElement('div');
-                wordInputDiv.className = 'word-input';
-                
-                const label = document.createElement('label');
-                label.textContent = `Word ${i + 1}:`;
-                
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = `recovery-word-${i + 1}`;
-                input.className = 'form-control';
-                input.setAttribute('list', 'word-suggestions');
-                
-                wordInputDiv.appendChild(label);
-                wordInputDiv.appendChild(input);
-                recoveryInputContainer.appendChild(wordInputDiv);
-            }
-            
-            // Add datalist for word suggestions
-            const datalist = document.createElement('datalist');
-            datalist.id = 'word-suggestions';
-            
-            wordList.forEach(word => {
-                const option = document.createElement('option');
-                option.value = word;
-                datalist.appendChild(option);
-            });
-            
-            document.body.appendChild(datalist);
-        }
-
-        function getRecoveryInputs() {
-            const words = [];
-            for (let i = 1; i <= 12; i++) {
-                const input = document.getElementById(`recovery-word-${i}`);
-                words.push(input.value.trim().toLowerCase());
-            }
-            return words;
-        }
-
-        function validateRecoveryPhrase(phrase) {
-            // In a real app, this would validate the phrase and derive the user's keys
-            // For this demo, we'll just check if all words are in our wordlist
-            return phrase.every(word => wordList.includes(word));
-        }
-
-        function deriveUserIdFromPhrase(phrase) {
-            // In a real app, this would use cryptographic functions to derive a consistent ID
-            // For demo, we'll just hash the phrase and take the first 6 digits
-            const phraseStr = phrase.join(' ');
-            const hash = CryptoJS.SHA256(phraseStr).toString();
-            return hash.substring(0, 6);
-        }
-
-        function saveUserToLocalStorage() {
-            localStorage.setItem('cryptext_user', JSON.stringify(currentUser));
-        }
-
-        function loadUserFromLocalStorage() {
-            const savedUser = localStorage.getItem('cryptext_user');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                return true;
-            }
-            return false;
-        }
-
-       // Update the addMessageToChat function
-        function addMessageToChat(content, isSent = true) {
-            const messageElement = document.createElement('div');
-            messageElement.className = `message ${isSent ? 'sent' : 'received'}`;
-            
-            // Create message content
-            const contentElement = document.createElement('div');
-            contentElement.className = 'message-content';
-            contentElement.textContent = content;
-            messageElement.appendChild(contentElement);
-            
-            // Create timestamp
-            const timeElement = document.createElement('div');
-            timeElement.className = 'message-time';
-            const now = new Date();
-            timeElement.textContent = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
-            messageElement.appendChild(timeElement);
-            
-            // Add to chat container
-            const chatMessages = document.getElementById('chat-messages');
-            chatMessages.appendChild(messageElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function connectToChat(userId) {
-            socket.emit('login', { userId: userId });
-        }
-
-// Send a message
-        function sendMessage(recipientId, content) {
-            socket.emit('send_message', {
-                senderId: currentUser.id,
-                recipientId: recipientId,
-                content: content
-            });
-        }
-
-        // Event Listeners
-        socket.on('new_message', (data) => {
-            addMessageToChat(data.content, false);
-        });
-
-        socket.on('message_sent', (data) => {
-            addMessageToChat(data.content, true);
-            console.log('Message sent succesfully', data);   // true omdat dit een verzonden bericht is
-        });
-
-        socket.on('message_error', (data) => {
-            console.error('Message error:', data.error);
-            alert('Error sending message: ' + data.error);
-        });
-
-        // Listen for online/offline status
-        socket.on('user_online', (data) => {
-            // Update UI to show user is online
-            const userElement = document.querySelector(`[data-user-id="${data.userId}"]`);
-            if (userElement) {
-                userElement.classList.add('online');
-            }
-        });
-
-        socket.on('user_offline', (data) => {
-            // Update UI to show user is offline
-            const userElement = document.querySelector(`[data-user-id="${data.userId}"]`);
-            if (userElement) {
-                userElement.classList.remove('online');
-            }
-        });
-
-        socket.on('connect', () => {
-            console.log('Connected to WebSocket server');
-            connectionStatus.textContent = 'Connected';
-            connectionStatus.style.color = 'green';
-        });
-
-        createAccountBtn.addEventListener('click', () => {
-            const userId = generateUniqueId();
-            const recoveryPhrase = generateRecoveryPhrase();
-            
-            currentUser.id = userId;
-            currentUser.recoveryPhrase = recoveryPhrase;
-            
-            userIdDisplay.textContent = userId;
-            displayRecoveryPhrase(recoveryPhrase);
-            
-            showScreen('setup');
-        });
-
-        recoverAccountBtn.addEventListener('click', () => {
-            createRecoveryInputs();
-            showScreen('recovery');
-        });
-
-        phraseConfirmedCheckbox.addEventListener('change', () => {
-            completeSetupBtn.disabled = !phraseConfirmedCheckbox.checked;
-        });
-
-        completeSetupBtn.addEventListener('click', () => {
-            currentUser.displayName = displayNameInput.value || 'Anonymous User';
-            
-            // Save user data
-            saveUserToLocalStorage();
-            
-            // Update chat screen with user info
-            chatUserIdDisplay.textContent = currentUser.id;
-            chatDisplayNameElement.textContent = currentUser.displayName;
-            
-            showScreen('chat');
-        });
-
-        recoverBtn.addEventListener('click', () => {
-            const inputPhrase = getRecoveryInputs();
-            
-            if (validateRecoveryPhrase(inputPhrase)) {
-                const userId = deriveUserIdFromPhrase(inputPhrase);
-                
-                currentUser.id = userId;
-                currentUser.recoveryPhrase = inputPhrase;
-                currentUser.displayName = 'Recovered User';
-                
-                // Save user data
-                saveUserToLocalStorage();
-                
-                // Update chat screen with user info
-                chatUserIdDisplay.textContent = currentUser.id;
-                chatDisplayNameElement.textContent = currentUser.displayName;
-                
-                recoveryErrorAlert.classList.add('hidden');
-                showScreen('chat');
-            } else {
-                recoveryErrorAlert.classList.remove('hidden');
-            }
-        });
-
-        backToWelcomeBtn.addEventListener('click', () => {
-            showScreen('welcome');
-        });
-
-        logoutBtn.addEventListener('click', () => {
-            // Clear user data if needed
-            localStorage.removeItem('cryptext_user');
-            showScreen('welcome');
-        });
-
-        sendBtn.addEventListener('click', () => {
-            const message = messageInput.value.trim();
-            if (message) {
-                // Get the current active contact's ID
-                const activeContact = document.querySelector('.active-contact');
-                if (!activeContact) {
-                    alert('Please select a contact first');
-                    return;
-                }
-                
-                const recipientId = activeContact.getAttribute('data-user-id');
-                
-                // Send message through socket
-                socket.emit('send_message', {
-                    senderId: currentUser.id,
-                    recipientId: recipientId,
-                    content: message
-                });
-                
-                // Clear input
-                messageInput.value = '';
-            }
-        });
-
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendBtn.click();
-            }
-        });
-
-        contactElements.forEach(contact => {
-            contact.addEventListener('click', function() {
-                // Remove active class from all contacts
-                contactElements.forEach(c => c.classList.remove('active-contact'));
-                // Add active class to clicked contact
-                this.classList.add('active-contact');
-                
-                // Update current chat name
-                const contactName = this.querySelector('.contact-name').textContent;
-                currentChatName.textContent = contactName;
-                
-                // In a real app, this would load the chat history
-                // For demo, we'll just clear the messages
-                chatMessages.innerHTML = '';
-                
-                // Add some sample messages
-                setTimeout(() => {
-                    addMessageToChat('Hi there! This is a new conversation.', false);
-                }, 300);
-            });
-        });
-
-        // Check if user is already logged in
-        window.addEventListener('DOMContentLoaded', () => {
-            if (loadUserFromLocalStorage()) {
-                chatUserIdDisplay.textContent = currentUser.id;
-                chatDisplayNameElement.textContent = currentUser.displayName;
-                showScreen('chat');
-            }
-        });
-    </script>
-</body>
-</html>
+</html></html>
