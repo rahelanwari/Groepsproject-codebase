@@ -1,8 +1,13 @@
+import sys
+import os
+
+# Voeg de 'src' map toe aan het pad zodat imports werken
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
+
 from flask import Flask
 from flask_cors import CORS
-from src.routes.api import api_bp
-from src.models.user import db
-import os
+from routes.api import api_bp
+from models.user import db
 
 app = Flask(__name__)
 
@@ -17,7 +22,6 @@ CORS(app, resources={
         "supports_credentials": True
     }
 })
-
 
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///crypText.db'
