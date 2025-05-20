@@ -8,12 +8,16 @@ app = Flask(__name__)
 
 CORS(app, resources={
     r"/*": {
-        "origins": ["http://localhost:8080"],
+        "origins": [
+            "http://localhost:8080",               # voor lokale testing
+            "https://jouw-site-naam.netlify.app"   # vervang met jouw echte Netlify URL
+        ],
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type"],
         "supports_credentials": True
     }
 })
+
 
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///crypText.db'
