@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 from flask import Flask
 from flask_cors import CORS
 from routes.api import api_bp
-from models.user import db
+#from models.user import db
 
 app = Flask(__name__)
 
