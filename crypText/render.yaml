@@ -3,6 +3,6 @@ services:
     name: cryptext-backend
     env: python
     plan: free
-    root: crypText/backend
+    root: backend
     buildCommand: pip install -r ../requirements.txt
     startCommand: gunicorn -k eventlet -w 1 app:app
