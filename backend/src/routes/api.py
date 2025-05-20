@@ -18,7 +18,9 @@ def create_user():
 
 @api_bp.route('/api/users/<user_id>', methods=['GET'])
 def get_user(user_id):
-    user = User.query.get_or_404(user_id)
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
     return jsonify({
         'id': user.id,
         'display_name': user.display_name,
