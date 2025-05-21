@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models.user import db, User
+from supabase_client import supabase
 
 
 api_bp = Blueprint('api', __name__)
