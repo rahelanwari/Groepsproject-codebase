@@ -13,6 +13,7 @@ crypText
 │   │   ├── routes
 │   │   └── utils
 │   ├── app.py
+|   ├── supabase_client.py
 │   ├── config.py
 │  └── requirements.txt
 ├── render.yaml
