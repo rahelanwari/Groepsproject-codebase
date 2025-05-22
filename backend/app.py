@@ -23,7 +23,7 @@ CORS(app, resources={
     r"/*": {
         "origins": [
             "http://localhost:8080",               # voor lokale testing
-            "https://cryptext-x.netlify.app"   # vervang met jouw echte Netlify URL
+            "https://cryptext-x.netlify.app/"   # vervang met jouw echte Netlify URL
         ],
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type"],
